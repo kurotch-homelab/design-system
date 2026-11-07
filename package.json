@@ -1,0 +1,39 @@
+{
+  "name": "forma-design-guidelines",
+  "private": true,
+  "version": "0.2.0",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "npm run build && node scripts/serve.mjs",
+    "dev:guides": "npm run build:guides && node scripts/serve.mjs",
+    "build": "npm run build:guides && npm run build:react",
+    "build:guides": "npm run build -w @kurotch-homelab/forma-tokens && npm run build -w @kurotch-homelab/forma-styles && npm run build -w @kurotch-homelab/forma-catalog",
+    "build:react": "npm run build -w @kurotch-homelab/forma-react && npm run build -w @kurotch-homelab/forma-react-preview",
+    "build:skill": "npm run build && node scripts/build-skill.mjs",
+    "pack:skill": "npm run build:skill && npm pack ./skills/forma-design-system --ignore-scripts --pack-destination output",
+    "test:skill": "node --test tests/skills/*.test.mjs",
+    "test:skill:consumer": "node tests/skills/consumer.mjs",
+    "typecheck": "tsc -p packages/react/tsconfig.json --noEmit && tsc -p apps/react-preview/tsconfig.json --noEmit",
+    "test": "node --test tests/unit/*.test.mjs",
+    "test:e2e": "playwright test",
+    "check": "node scripts/check.mjs && npm run typecheck"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.51.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "esbuild": "^0.28.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "typescript": "^7.0.2"
+  },
+  "license": "MIT"
+}

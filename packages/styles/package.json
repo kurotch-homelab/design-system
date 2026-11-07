@@ -1,0 +1,17 @@
+{
+  "name": "@kurotch-homelab/forma-styles",
+  "version": "0.2.1",
+  "type": "module",
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": "./dist/forma.css",
+    "./css": "./dist/forma.css"
+  },
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "license": "MIT"
+}

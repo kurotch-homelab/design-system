@@ -1,0 +1,7 @@
+* text=auto eol=lf
+
+# The portable skill manifest hashes exact bytes, including upstream font notices.
+skills/forma-design-system/** -text
+skills/forma-design-system/assets/fonts/*.txt whitespace=-blank-at-eol
+*.tgz binary
+*.ttf binary

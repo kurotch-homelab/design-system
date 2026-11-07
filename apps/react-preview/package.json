@@ -1,0 +1,13 @@
+{
+  "name": "@kurotch-homelab/forma-react-preview",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "dependencies": {
+    "@kurotch-homelab/forma-react": "0.1.1"
+  },
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "license": "MIT"
+}

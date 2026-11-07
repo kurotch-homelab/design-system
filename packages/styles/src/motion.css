@@ -1,0 +1,227 @@
+/* Motion enhances native state changes. Unsupported features fall back to immediate changes. */
+.f-button {
+  transition:
+    background-color var(--f-motion-fast) var(--f-ease-standard),
+    border-color var(--f-motion-fast) var(--f-ease-standard),
+    color var(--f-motion-fast) var(--f-ease-standard),
+    translate var(--f-motion-fast) var(--f-ease-standard);
+}
+.f-button:active:not(:disabled):not([aria-disabled='true']) {
+  translate: 0 1px;
+}
+.f-input,
+.f-tab,
+.f-option {
+  transition:
+    border-color var(--f-motion-fast) var(--f-ease-standard),
+    background-color var(--f-motion-fast) var(--f-ease-standard),
+    color var(--f-motion-fast) var(--f-ease-standard);
+}
+.f-switch-track {
+  transition: background-color var(--f-motion-fast) var(--f-ease-standard);
+}
+.f-switch-thumb,
+.f-switch-track > span,
+.f-accordion summary > span {
+  transition: transform var(--f-motion-fast) var(--f-ease-standard);
+}
+.f-progress-track > div {
+  transition: width var(--f-motion-standard) var(--f-ease-standard);
+}
+progress::-webkit-progress-value {
+  transition: width var(--f-motion-standard) var(--f-ease-standard);
+}
+progress::-moz-progress-bar {
+  transition: width var(--f-motion-standard) var(--f-ease-standard);
+}
+.f-tab-panel:not([hidden]),
+.f-motion-enter {
+  animation: f-fade-in var(--f-motion-fast) var(--f-ease-enter);
+}
+.f-toast {
+  animation: f-toast-in var(--f-motion-standard) var(--f-ease-enter);
+}
+.f-toast[data-leaving] {
+  animation: f-toast-out var(--f-motion-fast) var(--f-ease-exit) forwards;
+  pointer-events: none;
+}
+.f-skeleton {
+  animation: f-loading-pulse var(--f-motion-loading) ease-in-out 2;
+}
+.f-spinner {
+  animation-duration: var(--f-motion-spin);
+}
+@keyframes f-fade-in {
+  from {
+    opacity: 0.65;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes f-toast-in {
+  from {
+    opacity: 0;
+    translate: 0 var(--f-motion-distance-medium);
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes f-toast-out {
+  to {
+    opacity: 0;
+    translate: 0 var(--f-motion-distance-small);
+  }
+}
+@keyframes f-loading-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@supports (transition-behavior: allow-discrete) and (overlay: auto) {
+  .native-tooltip .f-tooltip {
+    opacity: 0;
+    translate: 0 var(--f-motion-distance-small);
+    transition:
+      opacity var(--f-motion-fast) var(--f-ease-enter),
+      translate var(--f-motion-fast) var(--f-ease-enter),
+      display var(--f-motion-fast) allow-discrete;
+  }
+  .native-tooltip:not([data-dismissed]):is(:hover, :focus-within) .f-tooltip {
+    opacity: 1;
+    translate: 0 0;
+  }
+  @starting-style {
+    .native-tooltip:not([data-dismissed]):is(:hover, :focus-within) .f-tooltip {
+      opacity: 0;
+      translate: 0 var(--f-motion-distance-small);
+    }
+  }
+  dialog.f-dialog,
+  dialog.f-drawer,
+  .f-popover.native-popover {
+    --f-enter-duration: var(--f-motion-standard);
+    --f-exit-duration: var(--f-motion-fast);
+    opacity: 0;
+    translate: 0 var(--f-motion-distance-medium);
+    transition:
+      opacity var(--f-exit-duration) var(--f-ease-exit),
+      translate var(--f-exit-duration) var(--f-ease-exit),
+      display var(--f-exit-duration) allow-discrete,
+      overlay var(--f-exit-duration) allow-discrete;
+  }
+  dialog.f-drawer {
+    --f-enter-duration: var(--f-motion-deliberate);
+    --f-exit-duration: var(--f-motion-standard);
+    translate: 100% 0;
+  }
+  .f-popover.native-popover {
+    --f-enter-duration: var(--f-motion-fast);
+    translate: 0 var(--f-motion-distance-small);
+  }
+  dialog.f-dialog[open],
+  dialog.f-drawer[open],
+  .f-popover.native-popover:popover-open {
+    opacity: 1;
+    translate: 0 0;
+    transition-duration: var(--f-enter-duration);
+    transition-timing-function: var(--f-ease-enter);
+  }
+  dialog.f-dialog:not([open]),
+  dialog.f-drawer:not([open]),
+  .f-popover.native-popover:not(:popover-open),
+  dialog.f-dialog:not([open])::backdrop,
+  dialog.f-drawer:not([open])::backdrop {
+    pointer-events: none;
+  }
+  dialog.f-dialog::backdrop,
+  dialog.f-drawer::backdrop {
+    background-color: #10182700;
+    transition:
+      background-color var(--f-motion-standard) var(--f-ease-standard),
+      display var(--f-motion-standard) allow-discrete,
+      overlay var(--f-motion-standard) allow-discrete;
+  }
+  dialog.f-dialog[open]::backdrop,
+  dialog.f-drawer[open]::backdrop {
+    background-color: #10182766;
+  }
+  @starting-style {
+    dialog.f-dialog[open] {
+      opacity: 0;
+      translate: 0 var(--f-motion-distance-medium);
+    }
+    dialog.f-drawer[open] {
+      opacity: 0;
+      translate: 100% 0;
+    }
+    .f-popover.native-popover:popover-open {
+      opacity: 0;
+      translate: 0 var(--f-motion-distance-small);
+    }
+    dialog.f-dialog[open]::backdrop,
+    dialog.f-drawer[open]::backdrop {
+      background-color: #10182700;
+    }
+  }
+}
+
+@supports selector(::details-content) and (interpolate-size: allow-keywords) {
+  .f-accordion details {
+    interpolate-size: allow-keywords;
+  }
+  .f-accordion details::details-content {
+    block-size: 0;
+    opacity: 0;
+    overflow: clip;
+    transition:
+      block-size var(--f-motion-standard) var(--f-ease-standard),
+      opacity var(--f-motion-fast) var(--f-ease-standard),
+      content-visibility var(--f-motion-standard) allow-discrete;
+  }
+  .f-accordion details[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+}
+
+/* Keep focus, native semantics and state changes immediate when motion is reduced. */
+[data-motion='reduce'] *,
+[data-motion='reduce'] *::before,
+[data-motion='reduce'] *::after,
+[data-motion='reduce'] dialog::backdrop {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+[data-motion='reduce'] details::details-content {
+  animation: none !important;
+  transition: none !important;
+}
+[data-motion='reduce'] .f-button:active {
+  translate: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .forma *,
+  .forma *::before,
+  .forma *::after,
+  .forma dialog::backdrop {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .forma details::details-content {
+    animation: none !important;
+    transition: none !important;
+  }
+  .forma .f-button:active {
+    translate: none;
+  }
+}

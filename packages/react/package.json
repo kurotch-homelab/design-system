@@ -1,0 +1,33 @@
+{
+  "name": "@kurotch-homelab/forma-react",
+  "version": "0.1.1",
+  "description": "Optional React components for the framework-independent Forma design guidelines",
+  "type": "module",
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles.css": {
+      "types": "./dist/styles.d.ts",
+      "default": "./dist/forma.css"
+    }
+  },
+  "peerDependencies": {
+    "react": "^18.3.0 || ^19.0.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node build.mjs"
+  },
+  "license": "MIT"
+}

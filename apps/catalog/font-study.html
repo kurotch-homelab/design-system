@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Forma — フォント比較</title>
+    <link rel="icon" href="data:," />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&amp;family=IBM+Plex+Sans+JP:wght@400;500;600&amp;family=Source+Sans+3:wght@400;500;600;700&amp;family=Zen+Kaku+Gothic+New:wght@400;500;700&amp;display=swap"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      :root {
+        color-scheme: light;
+        --bg: #f5f6f7;
+        --surface: #fff;
+        --text: #20252c;
+        --muted: #56616e;
+        --line: #d5dae0;
+        --blue: #2459cf;
+        --tint: #edf2ff;
+      }
+      :root[data-theme='dark'] {
+        color-scheme: dark;
+        --bg: #14171c;
+        --surface: #1c2027;
+        --text: #eef1f6;
+        --muted: #a5afbf;
+        --line: #485360;
+        --blue: #9abaff;
+        --tint: #222f4b;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          14px/1.7 'IBM Plex Sans JP',
+          system-ui,
+          'Yu Gothic',
+          sans-serif;
+      }
+      a {
+        color: var(--blue);
+        text-underline-offset: 3px;
+      }
+      button,
+      select,
+      input {
+        font: inherit;
+      }
+      button,
+      select {
+        cursor: pointer;
+      }
+      :focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 4px;
+      }
+      header {
+        padding: 20px max(24px, calc((100% - 1160px) / 2));
+        border-bottom: 1px solid var(--line);
+        background: var(--surface);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      header strong {
+        font-size: 20px;
+      }
+      main {
+        max-width: 1208px;
+        margin: auto;
+        padding: 40px 24px 64px;
+      }
+      h1 {
+        font-size: 28px;
+        margin: 0 0 8px;
+        font-weight: 600;
+      }
+      .intro {
+        color: var(--muted);
+        margin: 0 0 28px;
+        max-width: 68em;
+      }
+      fieldset {
+        padding: 0;
+        border: 0;
+        margin: 0;
+        min-width: 0;
+      }
+      legend {
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+      .choices {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+      }
+      .choice {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 16px;
+        background: var(--surface);
+        cursor: pointer;
+      }
+      .choice:has(:checked) {
+        border-color: var(--blue);
+        box-shadow: inset 0 0 0 1px var(--blue);
+        background: var(--tint);
+      }
+      .choice input {
+        margin-top: 6px;
+        accent-color: var(--blue);
+      }
+      .choice strong,
+      .choice small {
+        display: block;
+      }
+      .choice small {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 5px;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 24px;
+        margin: 24px 0 16px;
+      }
+      select {
+        border: 1px solid var(--line);
+        color: var(--text);
+        background: var(--surface);
+        padding: 6px 10px;
+        border-radius: 4px;
+      }
+      #font-status {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      #preview {
+        --family: 'IBM Plex Sans JP', sans-serif;
+        --heading-weight: 600;
+        --label-weight: 500;
+        --body-size: 14px;
+        --tracking: 0em;
+        font-family: var(--family);
+        font-synthesis: none;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 6px;
+        padding: 36px;
+      }
+      .sample-title {
+        margin: 8px 0 18px;
+        font-size: 36px;
+        font-weight: var(--heading-weight);
+        line-height: 1.5;
+        letter-spacing: var(--tracking);
+      }
+      .sample-kicker {
+        color: var(--muted);
+        margin: 0;
+        font-size: 14px;
+      }
+      .sample-copy {
+        font-size: var(--body-size);
+        line-height: 1.8;
+        max-width: 48em;
+        margin: 0 0 12px;
+      }
+      .sample-columns {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: 40px;
+        border-top: 1px solid var(--line);
+        padding-top: 28px;
+        margin-top: 28px;
+        font-size: var(--body-size);
+      }
+      .sample-columns > div {
+        min-width: 0;
+      }
+      .sample-columns h3 {
+        font-size: 18px;
+        font-weight: var(--heading-weight);
+        margin: 0 0 16px;
+      }
+      .sample-field {
+        margin-bottom: 16px;
+      }
+      .sample-field > span {
+        display: block;
+        font-weight: var(--label-weight);
+        margin-bottom: 6px;
+      }
+      .sample-input {
+        border: 1px solid #7c8797;
+        padding: 8px 12px;
+        border-radius: 4px;
+      }
+      .sample-help {
+        color: var(--muted);
+        margin: 6px 0 0;
+        font-size: 13px;
+      }
+      .sample-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+      }
+      .sample-button {
+        padding: 8px 16px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        font-weight: var(--label-weight);
+      }
+      .sample-button.primary {
+        background: var(--blue);
+        color: var(--surface);
+        border-color: var(--blue);
+      }
+      :root[data-theme='dark'] .sample-button.primary {
+        color: #102044;
+      }
+      .table-scroll {
+        overflow: auto;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 360px;
+        font-size: var(--body-size);
+      }
+      th,
+      td {
+        padding: 12px 8px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        white-space: nowrap;
+      }
+      th {
+        font-weight: var(--label-weight);
+        color: var(--muted);
+      }
+      th:last-child,
+      td:last-child {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .status {
+        font-size: 12px;
+        padding: 3px 7px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+      }
+      .glyphs {
+        font-size: var(--body-size);
+        padding-top: 24px;
+        margin: 24px 0 0;
+        border-top: 1px solid var(--line);
+        line-height: 1.9;
+      }
+      .glyphs span {
+        display: block;
+      }
+      #rationale {
+        margin: 20px 0 0;
+        line-height: 1.9;
+      }
+      .sources {
+        margin-top: 32px;
+        border-top: 1px solid var(--line);
+        padding-top: 20px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .sources ul {
+        display: flex;
+        gap: 12px 28px;
+        flex-wrap: wrap;
+        padding-left: 20px;
+      }
+      @media (max-width: 850px) {
+        .choices {
+          grid-template-columns: 1fr 1fr;
+        }
+        .sample-columns {
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+      }
+      @media (max-width: 480px) {
+        main {
+          padding: 28px 16px;
+        }
+        header {
+          padding: 16px;
+        }
+        .choices {
+          grid-template-columns: 1fr;
+        }
+        #preview {
+          padding: 20px;
+        }
+        .sample-title {
+          font-size: 28px;
+        }
+        #font-status {
+          margin-left: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header><strong>Forma / Typography study</strong><a href="./#intro">カタログへ戻る</a></header>
+    <main>
+      <h1>同じ画面で、書体を比べる。</h1>
+      <p class="intro">
+        業務画面の見出し、本文、入力欄、数値を同じ条件で比較します。書体の印象は設計上の評価です。カタログの標準書体にはIBM
+        Plex Sans JPを採用しました。
+      </p>
+      <fieldset>
+        <legend>比較する書体</legend>
+        <div class="choices">
+          <label class="choice"
+            ><input type="radio" name="font" value="plex" checked /><span
+              ><strong>01 · IBM Plex Sans JP</strong
+              ><small>採用書体 / 端正で、文字に個性がある</small></span
+            ></label
+          >
+          <label class="choice"
+            ><input type="radio" name="font" value="zen" /><span
+              ><strong>02 · Zen Kaku Gothic New</strong
+              ><small>柔らかさと、落ち着いた日本語</small></span
+            ></label
+          >
+          <label class="choice"
+            ><input type="radio" name="font" value="biz" /><span
+              ><strong>03 · BIZ UDPGothic</strong><small>文字を見分けやすい、実務寄り</small></span
+            ></label
+          >
+          <label class="choice"
+            ><input type="radio" name="font" value="system" /><span
+              ><strong>00 · 以前のシステム書体</strong
+              ><small>Segoe UI / 游ゴシックなど、OS依存</small></span
+            ></label
+          >
+        </div>
+      </fieldset>
+      <div class="controls">
+        <label
+          >テーマ
+          <select id="theme">
+            <option value="light">ライト</option>
+            <option value="dark">ダーク</option>
+          </select></label
+        >
+        <label
+          >本文
+          <select id="size">
+            <option value="14">14px / 業務画面</option>
+            <option value="16">16px / 紹介ページ</option>
+          </select></label
+        >
+        <label
+          >見出しの字間
+          <select id="tracking">
+            <option value="0">0 / 推奨</option>
+            <option value="-0.055">−0.055em / 以前のヒーロー</option>
+          </select></label
+        >
+        <span id="font-status" role="status">フォントを読み込んでいます…</span>
+      </div>
+      <section id="preview" aria-label="書体の比較用見本">
+        <p class="sample-kicker">Forma / Project workspace</p>
+        <h2 class="sample-title">日々の仕事に、<br />迷いのないデザインを。</h2>
+        <p class="sample-copy">
+          案件の進捗を確認し、次の作業を決める。必要な情報と操作を、自然な順序で配置します。装飾を抑え、文字の形と余白で読みやすさをつくります。
+        </p>
+        <p class="sample-copy">
+          A clear view of your work. Review progress, update details, and keep your team informed.
+        </p>
+        <div class="sample-columns">
+          <div>
+            <h3>案件の基本情報</h3>
+            <div class="sample-field">
+              <span>案件名 / Project name</span>
+              <div class="sample-input">コーポレートサイトのリニューアル</div>
+            </div>
+            <div class="sample-field">
+              <span>担当者 / Owner</span>
+              <div class="sample-input">田中 葵 / Aoi Tanaka</div>
+              <p class="sample-help">変更内容は、保存後にチームへ共有されます。</p>
+            </div>
+            <div class="sample-buttons">
+              <span class="sample-button primary">変更を保存</span
+              ><span class="sample-button">キャンセル</span>
+            </div>
+          </div>
+          <div>
+            <h3>今月の案件</h3>
+            <div
+              class="table-scroll"
+              tabindex="0"
+              role="region"
+              aria-label="比較用の案件表（横にスクロールできます）"
+            >
+              <table>
+                <thead>
+                  <tr>
+                    <th>案件名</th>
+                    <th>進捗</th>
+                    <th>金額</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>採用サイト制作</td>
+                    <td><span class="status">進行中</span></td>
+                    <td>¥1,280,000</td>
+                  </tr>
+                  <tr>
+                    <td>業務システム改修</td>
+                    <td><span class="status">確認待ち</span></td>
+                    <td>¥840,000</td>
+                  </tr>
+                  <tr>
+                    <td>ブランドガイド整備</td>
+                    <td><span class="status">完了</span></td>
+                    <td>¥96,500</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="sample-help">2026/11/02 更新 · 3件 / 12件</p>
+          </div>
+        </div>
+        <p class="glyphs">
+          <span>識別の確認：Il1 O0 rn m　／　カ力・へヘ・口ロ</span
+          ><span>0123456789　¥1,234,567　−12.5%　09:30–18:00</span>
+        </p>
+      </section>
+      <p id="rationale" aria-live="polite"></p>
+      <aside class="sources">
+        <strong>調査元</strong>
+        <ul>
+          <li>
+            <a href="https://www.ibm.com/design/language/typography/typeface/">IBM / Plexの設計</a>
+          </li>
+          <li><a href="https://fonts.google.com/specimen/IBM+Plex+Sans+JP">IBM Plex Sans JP</a></li>
+          <li>
+            <a href="https://fonts.google.com/specimen/Zen+Kaku+Gothic+New">Zen Kaku Gothic New</a>
+          </li>
+          <li><a href="https://fonts.google.com/specimen/Source+Sans+3">Source Sans 3</a></li>
+          <li><a href="https://www.morisawa.co.jp/about/news/6706">モリサワ / BIZ UD</a></li>
+        </ul>
+        <p>
+          比較用ページだけでGoogle
+          Fontsを読み込みます。ZenとBIZの英数字には、UI向けに設計されたSource Sans
+          3を組み合わせています。日本語本文は400、ラベルは500（BIZは700）、見出しは600（Zen・BIZは700）で、用意されているウェイトを使います。
+        </p>
+      </aside>
+    </main>
+    <script type="module">
+      const system =
+        '-apple-system,BlinkMacSystemFont,"Segoe UI","Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,sans-serif';
+      const candidates = {
+        plex: {
+          family: '"IBM Plex Sans JP",sans-serif',
+          fonts: ['IBM Plex Sans JP'],
+          heading: 600,
+          label: 500,
+          note: '採用書体。IBM Plex Sans JPで和文・英数字を揃えます。私の評価では、業務画面に必要な規律がありながら、英字の形に個性が出ます。見出し600、本文400、ラベル500を軸にすると、強弱を無理なく付けられます。',
+        },
+        zen: {
+          family: '"Source Sans 3","Zen Kaku Gothic New",sans-serif',
+          fonts: ['Source Sans 3', 'Zen Kaku Gothic New'],
+          heading: 700,
+          label: 500,
+          note: '日本語に少し柔らかさを持たせたい場合の候補。英数字をSource Sans 3で揃える組み合わせです。私の評価では企業サイトにも馴染みやすく、IBM Plexより穏やかな印象になります。',
+        },
+        biz: {
+          family: '"Source Sans 3","BIZ UDPGothic",sans-serif',
+          fonts: ['Source Sans 3', 'BIZ UDPGothic'],
+          heading: 700,
+          label: 700,
+          note: '読み取りと文字の判別を優先する候補。モリサワが可読性を重視して開発したUD書体で、Google Fonts版の日本語は400・700の2ウェイトです。私の評価では密度の高い業務画面に向き、見出しの細かな強弱は付けにくくなります。',
+        },
+        system: {
+          family: system,
+          fonts: [],
+          heading: 600,
+          label: 550,
+          note: '変更前のカタログと同じフォント指定。WindowsではSegoe UIと游ゴシックなどが使われます。見出しの字間を「以前のヒーロー」に切り替えると、書体だけでなく詰め方の影響も比べられます。実際に使われる書体はOSとインストール状況に依存します。',
+        },
+      };
+      const preview = document.querySelector('#preview'),
+        status = document.querySelector('#font-status');
+      let revision = 0;
+      async function applyFont(key) {
+        const ticket = ++revision,
+          item = candidates[key];
+        preview.style.setProperty('--family', item.family);
+        preview.style.setProperty('--heading-weight', item.heading);
+        preview.style.setProperty('--label-weight', item.label);
+        document.querySelector('#rationale').textContent = item.note;
+        status.textContent = item.fonts.length
+          ? 'フォントを読み込んでいます…'
+          : 'OSのフォントを使用中';
+        try {
+          const faces = await Promise.all(
+            item.fonts.flatMap((name) =>
+              [400, item.label, item.heading].map((weight) =>
+                document.fonts.load(
+                  `${weight} 14px "${name}"`,
+                  name === 'Source Sans 3' ? 'Project 0123456789' : '案件の進捗を確認',
+                ),
+              ),
+            ),
+          );
+          await document.fonts.ready;
+          if (ticket === revision && item.fonts.length)
+            status.textContent = faces.every((group) => group.length > 0)
+              ? 'Webフォント読み込み済み'
+              : '読み込めていない書体があります';
+        } catch {
+          if (ticket === revision) status.textContent = '読み込みに失敗しました（代替書体を表示）';
+        }
+      }
+      document
+        .querySelectorAll('input[name=font]')
+        .forEach((input) => input.addEventListener('change', () => applyFont(input.value)));
+      document
+        .querySelector('#theme')
+        .addEventListener(
+          'change',
+          (event) => (document.documentElement.dataset.theme = event.target.value),
+        );
+      document
+        .querySelector('#size')
+        .addEventListener('change', (event) =>
+          preview.style.setProperty('--body-size', `${event.target.value}px`),
+        );
+      document
+        .querySelector('#tracking')
+        .addEventListener('change', (event) =>
+          preview.style.setProperty('--tracking', `${event.target.value}em`),
+        );
+      applyFont('plex');
+    </script>
+  </body>
+</html>

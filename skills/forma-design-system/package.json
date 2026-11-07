@@ -1,0 +1,49 @@
+{
+  "name": "@kurotch-homelab/forma-design-system-skill",
+  "version": "1.0.1",
+  "description": "Formaを任意のプロジェクトへ導入する自己完結型スキル。React 35部品、CSS、トークン、書体、設計指針を同梱。",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kurotch-homelab/design-system.git",
+    "directory": "skills/forma-design-system"
+  },
+  "keywords": [
+    "agent-skill",
+    "forma",
+    "design-system",
+    "react",
+    "css",
+    "business-ui",
+    "japanese"
+  ],
+  "files": [
+    "SKILL.md",
+    "README.md",
+    "references",
+    "scripts",
+    "assets",
+    "bundle.json",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "agentSkill": {
+    "compatibleAgents": [
+      "codex",
+      "claude"
+    ],
+    "dataMode": "bundled",
+    "snapshot": "2026-11-07",
+    "requirements": {
+      "environment": [],
+      "commands": [
+        "node"
+      ],
+      "endpoints": []
+    }
+  },
+  "license": "(MIT AND OFL-1.1)"
+}

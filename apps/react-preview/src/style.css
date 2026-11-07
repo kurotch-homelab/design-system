@@ -1,0 +1,229 @@
+html {
+  scroll-behavior: auto;
+}
+body {
+  margin: 0;
+}
+.react-app {
+  min-height: 100vh;
+}
+.react-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 40px;
+  border-bottom: 1px solid var(--f-border);
+  background: var(--f-surface);
+  align-items: center;
+}
+.react-brand {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--f-text);
+  text-decoration: none;
+}
+.react-brand span {
+  color: var(--f-brand);
+}
+.react-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.react-controls .f-field {
+  min-width: 110px;
+}
+.react-layout {
+  max-width: 1480px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+}
+.react-nav {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  overflow-y: auto;
+  padding: 28px 24px;
+  border-right: 1px solid var(--f-border);
+}
+.react-nav .f-search {
+  margin-bottom: 20px;
+}
+.react-nav a {
+  display: block;
+  color: var(--f-muted);
+  padding: 7px 8px;
+  text-decoration: none;
+  font-size: 13px;
+  border-radius: 4px;
+}
+.react-nav a:hover {
+  color: var(--f-brand);
+  background: var(--f-brand-subtle);
+}
+.react-main {
+  min-width: 0;
+  padding: 48px;
+}
+.react-main h1 {
+  font-size: clamp(28px, 3.5vw, 40px);
+  margin: 12px 0 20px;
+  line-height: 1.3;
+}
+.react-main h2 {
+  font-size: 24px;
+  margin: 0;
+}
+.react-intro {
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--f-border);
+}
+.react-intro > p {
+  color: var(--f-muted);
+  max-width: 640px;
+  font-size: 16px;
+}
+.react-eyebrow {
+  color: var(--f-brand);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+.react-section {
+  padding: 36px 0;
+  border-bottom: 1px solid var(--f-border);
+  scroll-margin-top: 24px;
+}
+.react-section-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: baseline;
+}
+.react-section-header small {
+  font-variant-numeric: tabular-nums;
+  color: var(--f-muted);
+}
+.react-sample {
+  margin: 24px 0;
+  padding: 28px;
+  border: 1px solid var(--f-border);
+  border-radius: 8px;
+  background: var(--f-surface);
+}
+.react-sample > .f-field,
+.react-sample > .f-fieldset,
+.react-sample > form,
+.react-sample > .f-react-stack {
+  max-width: 520px;
+}
+.react-sample:has(> .react-table-example) {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.react-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.react-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.react-api {
+  color: var(--f-muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.react-code {
+  background: var(--f-subtle);
+  border: 1px solid var(--f-border);
+  border-radius: 6px;
+  margin-top: 12px;
+}
+.react-code > .react-row {
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--f-border);
+}
+.react-code pre {
+  padding: 16px;
+  margin: 0;
+  overflow: auto;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.react-section summary {
+  cursor: pointer;
+  width: fit-content;
+  color: var(--f-brand);
+}
+.react-mobile-nav {
+  display: none;
+}
+.react-skip {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  z-index: 1000;
+  padding: 8px;
+  background: var(--f-surface);
+}
+.react-skip:focus {
+  top: 8px;
+}
+@media (max-width: 900px) {
+  .react-header {
+    padding: 20px;
+    flex-wrap: wrap;
+  }
+  .react-main {
+    padding: 32px 24px;
+  }
+  .react-layout {
+    grid-template-columns: 190px minmax(0, 1fr);
+  }
+  .react-nav {
+    padding: 24px 12px;
+  }
+}
+@media (max-width: 650px) {
+  .react-layout {
+    display: block;
+  }
+  .react-nav {
+    display: none;
+  }
+  .react-mobile-nav {
+    display: block;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--f-border);
+  }
+  .react-main {
+    padding: 28px 20px;
+  }
+  .react-sample {
+    padding: 20px;
+  }
+  .react-controls {
+    gap: 8px;
+  }
+  .react-controls .f-field {
+    min-width: 0;
+    flex: 1;
+  }
+  .react-controls {
+    width: 100%;
+  }
+  .react-controls .f-input {
+    padding: 8px;
+  }
+  .react-section-header h2 {
+    font-size: 22px;
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@kurotch-homelab/forma-tokens",
+  "version": "0.1.1",
+  "type": "module",
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "exports": {
+    "./css": "./dist/tokens.css",
+    "./json": "./dist/tokens.json"
+  },
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,45 @@
+/* React adapter: structural details only. Tokens and motion come from forma-styles. */
+.f-react .f-react-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.f-react .f-react-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+}
+.f-react .f-radio:has(input:disabled),
+.f-react .f-switch:has(input:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.f-react .f-tab:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.f-react .f-popover .f-option:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.f-react .f-popover .f-option:disabled:hover {
+  background: transparent;
+}
+.f-react .f-data-table table {
+  min-width: 600px;
+}
+.f-react .f-breadcrumbs {
+  flex-wrap: wrap;
+}
+.f-react .f-table-footer {
+  flex-wrap: wrap;
+}
+.f-react .f-progress-indeterminate > div {
+  animation: f-progress-travel var(--f-motion-loading) var(--f-ease-standard) infinite alternate;
+}
+@keyframes f-progress-travel {
+  to {
+    transform: translateX(185%);
+  }
+}
