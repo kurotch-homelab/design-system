@@ -11,10 +11,10 @@ await mkdir(destination, { recursive: true });
 const npm = (...args) => spawnSync(process.execPath, [process.env.npm_execpath, ...args], {
   encoding: 'utf8', env: process.env,
 });
-for (const part of ['tokens', 'styles', 'react']) {
-  const pkg = JSON.parse(await readFile(`packages/${part}/package.json`, 'utf8'));
+for (const directory of ['packages/tokens', 'packages/styles', 'packages/react', 'skills/forma-design-system']) {
+  const pkg = JSON.parse(await readFile(`${directory}/package.json`, 'utf8'));
   if (pkg.publishConfig?.registry !== registry) throw new Error('Unexpected publish registry.');
-  const packed = npm('pack', '--workspace', pkg.name, '--ignore-scripts', '--json', '--pack-destination', destination);
+  const packed = npm('pack', `./${directory}`, '--ignore-scripts', '--json', '--pack-destination', destination);
   if (packed.status !== 0) throw new Error(packed.stderr);
   const [{ filename }] = JSON.parse(packed.stdout);
   const archive = resolve(destination, filename);

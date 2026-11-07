@@ -1,6 +1,6 @@
 # Formaパッケージの公開
 
-React・CSS・トークンはGitHub Packages（`https://npm.pkg.github.com`）へ公開します。各package.jsonの`repository`はこのリポジトリに関連付け、`publishConfig.registry`で公開先を固定します。利用手順は[GitHub PackagesからFormaを使う](github-packages.md)を参照してください。
+React・CSS・トークンと導入スキル本体はGitHub Packages（`https://npm.pkg.github.com`）へ公開します。各package.jsonの`repository`はこのリポジトリに関連付け、`publishConfig.registry`で公開先を固定します。利用手順は[GitHub PackagesからFormaを使う](github-packages.md)を参照してください。
 
 ## 公開フロー
 
@@ -21,7 +21,7 @@ npx playwright install chromium
 npm run test:skill:consumer
 ```
 
-このworkflowはGitHubホストランナーと、そのリポジトリの`GITHUB_TOKEN`（`packages: write`）を使います。ビルド・テスト後に3パッケージを公開し、公開されたintegrityを照合します。さらに、GitHub Packagesから独立したReact・HTML・トークン用プロジェクトへ実際にインストールして検証します。
+このworkflowはGitHubホストランナーと、そのリポジトリの`GITHUB_TOKEN`（`packages: write`）を使います。ビルド・テスト後に4パッケージを公開し、公開されたintegrityを照合します。さらに、GitHub Packagesから独立したReact・HTML・トークン用プロジェクトへ実際にインストールし、スキルの再取得・展開・自己検証も行います。
 
 ```sh
 gh workflow run publish-packages.yml --ref main
@@ -44,7 +44,7 @@ npm run publish:packages
 
 スキル自体は`skills/forma-design-system/`のフォルダをコピーするか、`npm run pack:skill`でアーカイブ化できます。スキルには設計資料・サンプル・フォント・導入補助を含め、React/CSS/トークンの実装はGitHub Packagesから取得します。元リポジトリへの依存はありません。
 
-スキルの配布先や組織内ポータルへの登録は、実装パッケージの公開とは独立した運用です。認証情報や組織固有の設定を配布物へ含めないでください。ソースはMIT、同梱フォントはSIL OFL 1.1です。
+`@kurotch-homelab/forma-design-system-skill`も同じworkflowでGitHub Packagesへ公開します。スキルを変更したらversionを上げ、`build:skill`でチェックサムを再生成してください。agent-skillsは公開済みのスキルをnpm生成のlockfileで選択し、取得先とintegrityを検証してポータルへ取り込みます。登録・更新はagent-skills側のPRでレビューします。認証情報や組織固有の設定を配布物へ含めないでください。ソースはMIT、同梱フォントはSIL OFL 1.1です。
 
 ## 検証モード
 

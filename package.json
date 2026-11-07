@@ -25,7 +25,8 @@
     "test:e2e": "playwright test",
     "check": "node scripts/check.mjs && npm run typecheck",
     "test:skill:consumer:github": "node tests/skills/consumer.mjs --github-packages",
-    "publish:packages": "node scripts/publish-packages.mjs"
+    "publish:packages": "node scripts/publish-packages.mjs",
+    "test:skill:published": "node scripts/verify-published-skill.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",

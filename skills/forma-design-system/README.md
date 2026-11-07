@@ -13,6 +13,8 @@ React・CSS・トークンをGitHub Packagesから取得して、任意のプロ
 
 npmアーカイブのパッケージ名は`@kurotch-homelab/forma-design-system-skill`です。展開した場合は`package/`の中身を配置します。既存の同名スキルを変更していたら、その差分を保って更新してください。
 
+スキル本体もGitHub Packagesで配布します。認証後に`npm pack @kurotch-homelab/forma-design-system-skill --registry=https://npm.pkg.github.com --ignore-scripts`で取得できます。組織のagent-skillsポータルは、レビュー済みの版を取得・検証して配布します。
+
 ## 利用する
 
 > $forma-design-system このプロジェクトにFormaを導入して。既存の画面と処理を保ちながら、案件一覧と編集フォームを適用例にして。

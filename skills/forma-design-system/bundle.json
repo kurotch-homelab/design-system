@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "registry": "https://npm.pkg.github.com",
   "name": "forma-design-system",
-  "snapshotId": "02478d317266ddc59b964b46967c3d999849bcf08fdf06740e299d7abf861bde",
+  "snapshotId": "7dabe1c546c4fc9a4f86fd20c6f7ba95d3ea5699a7754143dbbc73cc203052aa",
   "packages": {
     "react": {
       "name": "@kurotch-homelab/forma-react",
@@ -32,8 +32,8 @@
     "assets/fonts/OFL.txt": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da",
     "assets/fonts/SOURCE.txt": "d3ea6241c027b726817891d20ceb543be29999377389dfdc3a3e6bbf400f3812",
     "LICENSE": "901f1c710adecbbebaad2c07dace412f0efb8f13222b694e107533d6a77a28ba",
-    "package.json": "4d589aa15f42dc96119258a3fc09d7687d2d44482a3e21f50662fb27a903878e",
-    "README.md": "abdf68abbf7afdff3a7b72e26e294d1d53919d329ec2cb194dbf5d0e3a5be78d",
+    "package.json": "6a30898309a4290b57d97ae8c5879f1ed06a8ae340f03a57aee221b0bf2ee2d0",
+    "README.md": "20bbf0a8c248a9f4f35598bda217b9d4b3c05056b0f669e5014c8c0e136dba1d",
     "references/DESIGN.md": "73cc6a3ca2f0cc0e43988140b7041f852019442f5509050e9b086862d184d9c9",
     "references/HTML.md": "3a25396cc319f4cc92d2942b79f9c65890395c75837a524cf32a65b78092003a",
     "references/INTEGRATION.md": "dbed3665c32c8516c96f1fb7b349e4363663814f95f4a77660046082b3ba77d6",

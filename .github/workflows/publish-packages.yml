@@ -38,3 +38,12 @@ jobs:
         run: npm run test:skill:consumer:github
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify published skill archive
+        run: npm run test:skill:published
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: forma-skill-package
+          path: output/packages/*-skill-*.tgz
+          retention-days: 7
