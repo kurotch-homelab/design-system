@@ -1,0 +1,40 @@
+name: Publish Forma packages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: forma-packages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: https://npm.pkg.github.com
+          scope: '@kurotch-homelab'
+          cache: npm
+      - run: npm ci --registry=https://registry.npmjs.org/ --ignore-scripts --no-audit --no-fund
+      - run: npm run build && npm run build:skill && npm run check
+      - run: npm test && npm run test:skill
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:skill:consumer
+      - name: Publish pinned packages and verify integrity
+        run: npm run publish:packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install published packages in independent React and HTML applications
+        run: npm run test:skill:consumer:github
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

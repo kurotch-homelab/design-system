@@ -1,58 +1,55 @@
-# Formaの配布とリリース
+# Formaパッケージの公開
 
-ソース、ローカルnpmアーカイブ、自己完結型スキルを配布できます。ビルドと利用に専用レジストリや組織内サービスは必要ありません。コードと設計資料の利用条件はルートの`LICENSE`、同梱書体は`THIRD_PARTY_NOTICES.md`と`skills/forma-design-system/assets/fonts/OFL.txt`を参照してください。
+React・CSS・トークンはGitHub Packages（`https://npm.pkg.github.com`）へ公開します。各package.jsonの`repository`はこのリポジトリに関連付け、`publishConfig.registry`で公開先を固定します。利用手順は[GitHub PackagesからFormaを使う](github-packages.md)を参照してください。
 
-## ビルドと検証
+## 公開フロー
 
-リポジトリのルートで実行します。Node.js 22以上が必要です。
+1. 変更したパッケージのversionと、プレビューの依存指定を更新する。
+2. `npm install --package-lock-only --ignore-scripts`でlockfileを生成する。
+3. `npm run build:skill`で、スキルの固定バージョンとチェックサムを更新する。
+4. 次の検証を行い、変更をmainへ取り込む。
+5. GitHub Actionsの「Publish Forma packages」をmainに対して実行する。
 
 ```sh
 npm ci
-npm run pack:skill
+npm run build
+npm run build:skill
 npm run check
 npm test
 npm run test:skill
 npx playwright install chromium
-npm run test:e2e
+npm run test:skill:consumer
 ```
 
-`pack:skill`は共有パッケージをビルドし、スキルの資材・ライセンス・チェックサムを更新してから`output/`へnpmアーカイブを生成します。アーカイブ名とバージョンは`skills/forma-design-system/package.json`に従います。
-
-`npm run test:skill:consumer`はリポジトリ外のReact・HTMLプロジェクトへの導入を検証します。このテストはオフラインnpmインストールを行うため、先に同じ環境で`npm ci`を実行して依存をキャッシュし、Chromiumを導入してください。
-
-## レジストリを使わず配布する
-
-`skills/forma-design-system`を丸ごと配布すれば、元リポジトリなしで利用できます。配布先への配置方法は[スキルのREADME](../skills/forma-design-system/README.md)を参照してください。`SKILL.md`だけでなく、`LICENSE`、`THIRD_PARTY_NOTICES.md`、`bundle.json`、`assets/`、`references/`、`scripts/`を含めます。
-
-React・CSS・トークンを個別のnpmアーカイブとして使う場合は、ビルド後に実行します。
+このworkflowはGitHubホストランナーと、そのリポジトリの`GITHUB_TOKEN`（`packages: write`）を使います。ビルド・テスト後に3パッケージを公開し、公開されたintegrityを照合します。さらに、GitHub Packagesから独立したReact・HTML・トークン用プロジェクトへ実際にインストールして検証します。
 
 ```sh
-npm pack -w @kurotch-homelab/forma-react --pack-destination output
-npm pack -w @kurotch-homelab/forma-styles --pack-destination output
-npm pack -w @kurotch-homelab/forma-tokens --pack-destination output
+gh workflow run publish-packages.yml --ref main
 ```
 
-利用するプロジェクトで、生成された`.tgz`のパスを`npm install`に渡します。CSSやJSONを直接コピーする場合も、対応する`LICENSE`を保持してください。フォントを再配布する場合は`OFL.txt`と出典を保持してください。
+GitHub Packagesではパッケージの公開範囲をリポジトリとは別に管理します。初回公開後にPackages設定で公開範囲とアクセス権を確認してください。取得には公開パッケージでも認証が必要です。[公式仕様](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry)
 
-## 任意のレジストリへ公開する
+## ローカルから公開する場合
 
-このリポジトリは公開先レジストリを固定しません。公開先のURL、認証、パッケージの公開権限はメンテナーの環境で設定します。以下の`<REGISTRY_URL>`と`<SKILL_ARCHIVE>`を実際の値に置き換えてください。
+GitHub Packagesへ書き込み可能な既存のnpm認証、または`write:packages`を持つpersonal access token (classic)を環境から設定したうえで実行します。
 
 ```sh
-npm login --registry=<REGISTRY_URL>
-npm publish <SKILL_ARCHIVE> --registry=<REGISTRY_URL> --ignore-scripts --dry-run
-npm publish <SKILL_ARCHIVE> --registry=<REGISTRY_URL> --ignore-scripts
+npm run build
+npm run publish:packages
 ```
 
-検証したアーカイブをそのまま公開し、公開後に版とintegrityを確認します。組織固有のポータル登録、CI認証、ネットワーク要件は各組織の非公開ドキュメントで管理します。認証情報やローカルの`.npmrc`をスキルに含めないでください。
+`publish:packages`は`output/packages/`へアーカイブを生成して公開します。既存の同じ版はintegrityが一致する場合のみ再利用します。内容が異なる場合は停止するため、必ずversionを上げてください。スキル内にパッケージアーカイブを生成することはありません。
 
-## バージョンと同梱物を更新する
+## スキルの配布
 
-公開済みの同じ`package@version`を置き換えません。ソース、配布ライセンス、同梱資材を変更したパッケージは版を更新し、Reactプレビューなどの依存指定も合わせます。スキルには内包するパッケージの版とチェックサムを`bundle.json`で固定します。
+スキル自体は`skills/forma-design-system/`のフォルダをコピーするか、`npm run pack:skill`でアーカイブ化できます。スキルには設計資料・サンプル・フォント・導入補助を含め、React/CSS/トークンの実装はGitHub Packagesから取得します。元リポジトリへの依存はありません。
 
-1. 対象の`package.json`のversionと、スキルの`agentSkill.snapshot`を更新する。
-2. `npm install --package-lock-only --ignore-scripts`でlockfileを更新する。
-3. `npm run pack:skill`でライセンスと同梱パッケージを再生成する。
-4. チェック、テスト、実アーカイブの内容を確認する。
+スキルの配布先や組織内ポータルへの登録は、実装パッケージの公開とは独立した運用です。認証情報や組織固有の設定を配布物へ含めないでください。ソースはMIT、同梱フォントはSIL OFL 1.1です。
 
-ビルドは前回のmanifestに登録されている古い同梱パッケージを、新しい版の生成後に取り除きます。公開済みのアーカイブは`output/`などの作業用保存先で別途保持してください。
+## 検証モード
+
+- `test:skill`：依存準備、取得前の停止、資材配置、競合保護、旧file:依存からの移行を検証。
+- `test:skill:consumer`：テスト時だけ生成したパッケージをローカルのnpmレジストリで配信し、独立プロジェクトへの取得・画面動作を検証。
+- `test:skill:consumer:github`：公開済みGitHub Packagesを取得して同じ検証を実行。`NODE_AUTH_TOKEN`とパッケージ読み取り権限が必要。
+
+ブラウザ検証ではローカル配信以外のリクエストを拒否し、フォント、ライト/ダーク、reduced motion、390/768/1440px、axe、入力とフォーカス復帰を確認します。

@@ -3,7 +3,8 @@ import { cp, mkdir, mkdtemp, readFile, realpath, rename, rm, writeFile } from 'n
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { basename, extname, join, resolve, sep } from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { chromium, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import assert from 'node:assert/strict';
@@ -14,20 +15,25 @@ const skill = join(scratch, 'standalone skill');
 const movedSkill = join(scratch, 'relocated skill 日本語');
 const html = join(scratch, 'html');
 const react = join(scratch, 'react');
-let browser, server;
-const run = (args, cwd) => {
-  const result = spawnSync(process.execPath, args, {
-    cwd,
-    encoding: 'utf8',
-    env: { ...process.env, NODE_PATH: '' },
-  });
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  return result.stdout;
-};
+const tokens = join(scratch, 'tokens');
+const live = process.argv.includes('--github-packages');
+let browser, server, packageServer;
+let registry = 'https://npm.pkg.github.com';
+const run = (args, cwd) => new Promise((resolveRun, rejectRun) => {
+  const child = spawn(process.execPath, args, { cwd, env: { ...process.env, NODE_PATH: '' }, stdio: ['ignore', 'pipe', 'pipe'] });
+  let stdout = '', stderr = '';
+  child.stdout.on('data', (data) => { stdout += data; });
+  child.stderr.on('data', (data) => { stderr += data; });
+  child.on('error', rejectRun);
+  child.on('close', (code) => code === 0 ? resolveRun(stdout) : rejectRun(new Error(stderr || stdout || `Exit ${code}`)));
+});
 try {
   await cp(join(root, 'skills/forma-design-system'), skill, { recursive: true });
   await mkdir(html);
   await mkdir(react);
+  await mkdir(tokens);
+  if (!process.env.npm_execpath) throw new Error('Run with npm run test:skill:consumer.');
+  if (live && !process.env.NODE_AUTH_TOKEN) throw new Error('GitHub Packages consumer validation requires NODE_AUTH_TOKEN.');
   const dependencies = {},
     devDependencies = {};
   for (const name of [
@@ -55,7 +61,7 @@ try {
       2,
     ),
   );
-  run(
+  await run(
     [
       join(skill, 'scripts/forma.mjs'),
       'install',
@@ -68,7 +74,7 @@ try {
     ],
     scratch,
   );
-  run(
+  await run(
     [
       join(skill, 'scripts/forma.mjs'),
       'install',
@@ -88,22 +94,43 @@ try {
     join(skill, 'assets/examples/react/FormaBoundary.tsx'),
     join(react, 'FormaBoundary.tsx'),
   );
-  // After staging, the original skill path is unavailable. The app must use its own tarball/assets.
+  await run([join(skill, 'scripts/forma.mjs'), 'install', '--target', tokens, '--mode', 'tokens', '--assets-dir', 'design/forma'], scratch);
+  // Local validation serves freshly packed packages from an isolated registry, never from the skill.
+  // Release validation instead consumes the actual GitHub Packages versions.
+  if (!live) {
+    const entries = new Map(), archives = new Map();
+    for (const part of ['react', 'styles', 'tokens']) {
+      const pkg = JSON.parse(await readFile(join(root, 'packages', part, 'package.json'), 'utf8'));
+      const [{ filename }] = JSON.parse(await run([process.env.npm_execpath, 'pack', '--workspace', pkg.name, '--ignore-scripts', '--json', '--pack-destination', scratch], root));
+      const bytes = await readFile(join(scratch, filename));
+      entries.set(pkg.name, { pkg, filename, integrity: 'sha512-' + createHash('sha512').update(bytes).digest('base64') });
+      archives.set('/tarballs/' + filename, bytes);
+    }
+    packageServer = createServer((request, response) => {
+      const path = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
+      if (archives.has(path)) return response.writeHead(200, { 'Content-Type': 'application/octet-stream' }).end(archives.get(path));
+      const item = entries.get(path.slice(1));
+      if (!item) return response.writeHead(404, { 'Content-Type': 'application/json' }).end(JSON.stringify({ error: 'not found' }));
+      const version = { ...item.pkg, dist: { integrity: item.integrity, tarball: registry + '/tarballs/' + item.filename } };
+      response.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify({ name: item.pkg.name, 'dist-tags': { latest: item.pkg.version }, versions: { [item.pkg.version]: version } }));
+    });
+    await new Promise((resolveListen) => packageServer.listen(0, '127.0.0.1', resolveListen));
+    registry = `http://127.0.0.1:${packageServer.address().port}`;
+  }
   await rename(skill, movedSkill);
-  if (!process.env.npm_execpath) throw new Error('Run with npm run test:skill:consumer.');
-  run(
-    [
-      process.env.npm_execpath,
-      'install',
-      '--offline',
-      '--ignore-scripts',
-      '--no-audit',
-      '--no-fund',
-    ],
-    react,
-  );
-  const packageJson = JSON.parse(await readFile(join(react, 'package.json')));
-  assert.match(packageJson.dependencies['@kurotch-homelab/forma-react'], /^file:vendor\/forma\//);
+  for (const [app, packageName] of [[react, 'react'], [html, 'styles'], [tokens, 'tokens']]) {
+    await writeFile(join(app, '.npmrc'), 'registry=https://registry.npmjs.org/\n@kurotch-homelab:registry=' + registry + '\n' + (live ? '//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}\n' : ''));
+    await run([process.env.npm_execpath, 'install', '--prefer-offline', '--ignore-scripts', '--no-audit', '--no-fund'], app);
+    const pkg = JSON.parse(await readFile(join(app, 'package.json'), 'utf8'));
+    const name = '@kurotch-homelab/forma-' + packageName;
+    assert.match(pkg.dependencies[name], /^\d+\.\d+\.\d+$/);
+    const lock = JSON.parse(await readFile(join(app, 'package-lock.json'), 'utf8'));
+    assert.ok(lock.packages['node_modules/' + name].resolved.startsWith(registry + '/'));
+    assert.match(lock.packages['node_modules/' + name].integrity, /^sha512-/);
+    await run([join(movedSkill, 'scripts/forma.mjs'), 'sync', '--target', app], scratch);
+    await run([join(movedSkill, 'scripts/forma.mjs'), 'verify', '--target', app], scratch);
+  }
+  assert.equal(JSON.parse(await readFile(join(tokens, 'design/forma/tokens.json'), 'utf8')).primitive.white, '#ffffff');
   await writeFile(
     join(react, 'main.tsx'),
     `import { StrictMode } from 'react';
@@ -129,7 +156,7 @@ createRoot(document.getElementById('root')!).render(<StrictMode><FormaBoundary><
       include: ['*.tsx'],
     }),
   );
-  run(['node_modules/typescript/bin/tsc', '-p', 'tsconfig.json'], react);
+  await run(['node_modules/typescript/bin/tsc', '-p', 'tsconfig.json'], react);
   await writeFile(
     join(react, 'build.mjs'),
     `import { build } from 'esbuild';
@@ -140,9 +167,9 @@ await cp('public/forma','dist/forma',{recursive:true});
 await writeFile('dist/index.html','<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Forma standalone consumer</title><link rel="stylesheet" href="./app.css"><link rel="stylesheet" href="./forma/fonts/fonts.css"><style>body{margin:0}.forma{min-height:100vh}</style></head><body><div id="root"></div><script type="module" src="./app.js"></script></body></html>');
 `,
   );
-  run(['build.mjs'], react);
-  run([join(movedSkill, 'scripts/forma.mjs'), 'verify', '--target', react], scratch);
-  run([join(movedSkill, 'scripts/forma.mjs'), 'verify', '--target', html], scratch);
+  await run(['build.mjs'], react);
+  await run([join(movedSkill, 'scripts/forma.mjs'), 'verify', '--target', react], scratch);
+  await run([join(movedSkill, 'scripts/forma.mjs'), 'verify', '--target', html], scratch);
   server = createServer(async (request, response) => {
     try {
       const url = new URL(request.url, 'http://localhost');
@@ -203,7 +230,8 @@ await writeFile('dist/index.html','<!doctype html><html lang="ja"><head><meta ch
   await expect(page.locator('.f-toast')).toHaveCount(0);
   await mkdir(join(root, 'output/playwright'), { recursive: true });
   const report = {
-    offlineInstall: true,
+    registryInstall: live ? 'github-packages' : 'local-registry-fixture',
+    formaPackages: ['react', 'styles', 'tokens'],
     externalRequests: blocked,
     errors,
     versions: dependencies,
@@ -268,11 +296,12 @@ await writeFile('dist/index.html','<!doctype html><html lang="ja"><head><meta ch
   assert.deepEqual(errors, []);
   await writeFile(join(root, 'output/skill-validation.json'), JSON.stringify(report, null, 2));
   console.log(
-    'Standalone consumer passed: offline npm install, TypeScript build, local fonts, real React/HTML workflows, axe, 390/768/1440px, dark/reduced motion; no external browser requests.',
+    'Standalone consumer passed: registry package install and sync, TypeScript build, local fonts, real React/HTML workflows, axe, 390/768/1440px, dark/reduced motion; no external browser requests.',
   );
 } finally {
   await browser?.close();
   if (server) await new Promise((resolve) => server.close(resolve));
+  if (packageServer) await new Promise((resolve) => packageServer.close(resolve));
   const actual = await realpath(scratch),
     parent = await realpath(tmpdir());
   assert.ok(actual.startsWith(parent + sep) && basename(actual).startsWith('forma-consumer-test-'));

@@ -1,6 +1,6 @@
 # Forma React API
 
-Install the bundled package with the skill installer, then follow INTEGRATION.md. No build from the source repository or registry download of Forma is required. Import `@kurotch-homelab/forma-react/styles.css` once and serve the bundled fonts. The package includes ES Modules, declarations and component sources; React is its only runtime peer dependency.
+Install the version recorded in bundle.json from GitHub Packages, then follow INTEGRATION.md. Authentication and a package-manager install are required; no source checkout is needed. Import `@kurotch-homelab/forma-react/styles.css` once and serve the bundled fonts. The package includes ES Modules, declarations and component sources; React is its only runtime peer dependency.
 
 ## Providerと共通契約
 
@@ -20,7 +20,7 @@ Install the bundled package with the skill installer, then follow INTEGRATION.md
 
 ## 35部品の主要API
 
-完全な型は`dist/index.d.ts`から参照できます。同梱のReact例と型定義を使い、利用アプリで操作を確認します。
+完全な型は`dist/index.d.ts`から参照できます。同梱のReact例と取得したパッケージの型定義を使い、利用アプリで操作を確認します。
 
 | 部品            | 主なプロパティ                                                                                                   |
 | --------------- | ---------------------------------------------------------------------------------------------------------------- |

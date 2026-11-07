@@ -1,22 +1,23 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
+  "registry": "https://npm.pkg.github.com",
   "name": "forma-design-system",
-  "snapshotId": "611502d92fefb3ccba8fac39229cf647ff2283419642cd448b338aa97ba2ab63",
+  "snapshotId": "02478d317266ddc59b964b46967c3d999849bcf08fdf06740e299d7abf861bde",
   "packages": {
     "react": {
       "name": "@kurotch-homelab/forma-react",
-      "version": "0.1.1",
-      "path": "assets/packages/kurotch-homelab-forma-react-0.1.1.tgz"
+      "version": "0.1.2",
+      "registry": "https://npm.pkg.github.com"
     },
     "styles": {
       "name": "@kurotch-homelab/forma-styles",
-      "version": "0.2.1",
-      "path": "assets/packages/kurotch-homelab-forma-styles-0.2.1.tgz"
+      "version": "0.2.2",
+      "registry": "https://npm.pkg.github.com"
     },
     "tokens": {
       "name": "@kurotch-homelab/forma-tokens",
-      "version": "0.1.1",
-      "path": "assets/packages/kurotch-homelab-forma-tokens-0.1.1.tgz"
+      "version": "0.1.2",
+      "registry": "https://npm.pkg.github.com"
     }
   },
   "files": {
@@ -30,21 +31,15 @@
     "assets/fonts/IBMPlexSansJP-SemiBold.ttf": "5985c29d2d5d444072915cf5874dc80e0a3f5fadbf14a9e3013a03a8fe6d7ff5",
     "assets/fonts/OFL.txt": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da",
     "assets/fonts/SOURCE.txt": "d3ea6241c027b726817891d20ceb543be29999377389dfdc3a3e6bbf400f3812",
-    "assets/packages/kurotch-homelab-forma-react-0.1.1.tgz": "09f1adc7965d9acfcfeb2d82b54c47c6c4d3275794981315808b8cfedc3e3453",
-    "assets/packages/kurotch-homelab-forma-styles-0.2.1.tgz": "c35e9209b15fc4e8545f7bddc5f69a7c59b97d5e6294a835fe7bf32319c91324",
-    "assets/packages/kurotch-homelab-forma-tokens-0.1.1.tgz": "8b0804c4bdf614e0a8e16a52509c1d614bfb8d03ba42855e58a071da4b3c6253",
-    "assets/styles/forma.css": "9de3155672574dfa1cc5da9110e748e05fd03e3cbd08a1116d478a4287071565",
-    "assets/styles/tokens.css": "62045194bf0667cf4d0ac58c3ffca2a34fbf266a3e4f77a0b325a0345f8ac989",
-    "assets/styles/tokens.json": "3962d4b9c014222e126837aea7d060701b6ac7fa18ba5b904c568e7bfd24947f",
     "LICENSE": "901f1c710adecbbebaad2c07dace412f0efb8f13222b694e107533d6a77a28ba",
-    "package.json": "e884e15e5511f9dacba020e77cffdd3acf12d1cf35660644619607bda8595b24",
-    "README.md": "5c3b21b6eb8fb8deebeaef8cfd2945a17a2abbacbaa4e1f3c7fb08985ef552b3",
+    "package.json": "4d589aa15f42dc96119258a3fc09d7687d2d44482a3e21f50662fb27a903878e",
+    "README.md": "abdf68abbf7afdff3a7b72e26e294d1d53919d329ec2cb194dbf5d0e3a5be78d",
     "references/DESIGN.md": "73cc6a3ca2f0cc0e43988140b7041f852019442f5509050e9b086862d184d9c9",
     "references/HTML.md": "3a25396cc319f4cc92d2942b79f9c65890395c75837a524cf32a65b78092003a",
-    "references/INTEGRATION.md": "1b72b97a675c7adb6ae1933d9e3a3d493d35a56833f4ce90387651c8d7076f66",
-    "references/REACT.md": "41a8bac1a5beadb99b6bf9c0e73d07336cd7b2ec010b2b2b40f0897368a87c9f",
-    "scripts/forma.mjs": "f3d399c0a891dd9e3b6bd17f6cd4e59bb61263a7cbf432d1f53032d2196f1fe9",
-    "SKILL.md": "785ad3c72474ab34b56de4558fe9b01787106b65f89d0bee963a40eb25ef5dfe",
+    "references/INTEGRATION.md": "dbed3665c32c8516c96f1fb7b349e4363663814f95f4a77660046082b3ba77d6",
+    "references/REACT.md": "b455d2d0d7cb776b7d5b6c8204b8412fdea9a25beb7d445c547758610b882e79",
+    "scripts/forma.mjs": "449bed9621218911b0ffaff0fd177a872b466f60fc5585000d5f71a3edde4872",
+    "SKILL.md": "ba00e10b1f1625725898265302adffc0a17ba02d3a56b88c65eeba85cf2bf50b",
     "THIRD_PARTY_NOTICES.md": "7d733d2542e2d53c6b04338e758a618482f8a3f00887bc1dea504186dfcca572"
   }
 }

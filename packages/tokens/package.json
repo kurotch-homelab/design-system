@@ -1,6 +1,6 @@
 {
   "name": "@kurotch-homelab/forma-tokens",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "files": [
     "dist",
@@ -8,10 +8,19 @@
   ],
   "exports": {
     "./css": "./dist/tokens.css",
-    "./json": "./dist/tokens.json"
+    "./json": "./dist/tokens.json",
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "node build.mjs"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kurotch-homelab/design-system.git",
+    "directory": "packages/tokens"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
 }

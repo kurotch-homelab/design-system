@@ -4,21 +4,15 @@ Formaのデザインガイドラインに準拠した、任意で採用できる
 
 ガイドライン、`@kurotch-homelab/forma-tokens`、`@kurotch-homelab/forma-styles`は引き続きReactなしで利用できます。React Aria、アイコン、日付操作、アニメーションの追加ライブラリは使っていません。
 
-## ローカル導入
+## GitHub Packagesから導入
 
-このリポジトリのルートで実行します。npmレジストリへの公開は行っていません。
-
-```sh
-npm ci
-npm run build
-npm pack -w @kurotch-homelab/forma-react --pack-destination output
-```
-
-利用先で生成したtarballをインストールします。
+[利用者向け設定](../../docs/github-packages.md)に従って、`@kurotch-homelab`のレジストリと読み取り認証を設定します。利用先で実行します。
 
 ```sh
-npm install /path/to/kurotch-homelab-forma-react-0.1.1.tgz
+npm install @kurotch-homelab/forma-react@0.1.2
 ```
+
+React本体とReact DOMは利用アプリ側で用意します。CSSは次のように一度だけ読み込みます。
 
 ```tsx
 import { useState } from 'react';

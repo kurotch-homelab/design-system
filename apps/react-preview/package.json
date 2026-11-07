@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "dependencies": {
-    "@kurotch-homelab/forma-react": "0.1.1"
+    "@kurotch-homelab/forma-react": "0.1.2"
   },
   "scripts": {
     "build": "node build.mjs"

@@ -1,7 +1,7 @@
 {
   "name": "@kurotch-homelab/forma-design-system-skill",
-  "version": "1.0.1",
-  "description": "Formaを任意のプロジェクトへ導入する自己完結型スキル。React 35部品、CSS、トークン、書体、設計指針を同梱。",
+  "version": "2.0.0",
+  "description": "GitHub PackagesからFormaを導入するスキル。React・CSS・トークンの導入支援、IBM Plex Sans JP、設計指針を提供。",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,14 +35,22 @@
       "codex",
       "claude"
     ],
-    "dataMode": "bundled",
+    "dataMode": "hybrid",
     "snapshot": "2026-11-07",
     "requirements": {
-      "environment": [],
-      "commands": [
-        "node"
+      "environment": [
+        {
+          "name": "NODE_AUTH_TOKEN",
+          "description": "GitHub Packagesを読むためのread:packages権限付きpersonal access token (classic)。npm設定の環境変数から参照する。"
+        }
       ],
-      "endpoints": []
+      "commands": [
+        "node",
+        "npm"
+      ],
+      "endpoints": [
+        "https://npm.pkg.github.com"
+      ]
     }
   },
   "license": "(MIT AND OFL-1.1)"

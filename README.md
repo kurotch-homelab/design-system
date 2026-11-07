@@ -4,11 +4,11 @@
 
 React向けには、同じトークンとCSSに準拠した任意の35部品パッケージ **`@kurotch-homelab/forma-react`** を提供します。[導入・API](./packages/react/README.md)、[ローカルプレビュー](http://127.0.0.1:5173/react/index.html)から確認できます。
 
-別のプロジェクトへ導入する場合は、自己完結型の[forma-design-systemスキル](./skills/forma-design-system/README.md)を利用できます。このフォルダには配布パッケージ・CSS・トークン・IBM Plex Sans JP・導入スクリプト・設計/API資料が同梱されており、このリポジトリなしで動作します。
+別のプロジェクトへ導入する場合は、[forma-design-systemスキル](./skills/forma-design-system/README.md)を利用できます。スキルはGitHub PackagesからReact・CSS・トークンを導入し、書体・設計/API資料・導入補助を提供します。元リポジトリのcheckoutは不要です。
 
-スキルの同梱物を更新するメンテナー用コマンドは`npm run build:skill`、独立性・競合保護の検証は`npm run test:skill`です。`npm run test:skill:consumer`はスキルをリポジトリ外へ移し、キャッシュを使うオフラインnpm導入と、React/HTMLの実画面・書体・アクセシビリティを確認します。
+スキルにパッケージの`.tgz`や配布CSS・トークンは含めません。`npm run build:skill`で導入情報を生成し、`npm run test:skill`でバージョン指定・競合保護・移行を検証します。`npm run test:skill:consumer`はテスト用レジストリから3パッケージを取得し、独立したReact/HTMLプロジェクトの画面・書体・アクセシビリティを確認します。
 
-スキルのパッケージ名は`@kurotch-homelab/forma-design-system-skill`です。`npm run pack:skill`で配布用アーカイブを作成します。専用レジストリなしで利用できます。[配布とリリースの手順](./docs/publishing.md)を参照してください。
+パッケージの取得にはGitHub Packagesの認証が必要です。[利用者向け設定](./docs/github-packages.md)、[公開手順](./docs/publishing.md)を参照してください。
 
 **特定のフレームワーク、UIライブラリ、JSランタイムは必要ありません。** ガイドラインだけを採用することも、CSSを1枚読み込むこともできます。
 
@@ -104,23 +104,19 @@ npm test
 
 ブランド色変更時は、文字色と背景色を合わせて検証してください。トークンは基本色 → 意味別 → 部品別の3層です。Web以外の環境でもJSONから意味別トークンを利用できます。
 
-## 任意のnpmパッケージ化
+## GitHub Packagesから導入する
 
-CSSファイルを直接コピーする方法を基本とします。npmで管理したい場合は、ビルド後にローカルtarballを生成できます。レジストリへの公開は行いません。
-
-```sh
-npm pack -w @kurotch-homelab/forma-styles
-npm pack -w @kurotch-homelab/forma-tokens
-```
-
-`@kurotch-homelab/forma-styles`にはトークンを同梱しているため、単独で利用できます。Reactアプリでは次のように型付きコンポーネントを利用できます。詳細なAPIと制約は[ReactパッケージのREADME](./packages/react/README.md)を参照してください。
+[レジストリと認証](./docs/github-packages.md)を設定した利用先プロジェクトで、必要なパッケージをインストールします。CSSとトークンはReactなしで利用できます。
 
 ```sh
-npm run build
-npm pack -w @kurotch-homelab/forma-react --pack-destination output
-# 利用先で生成したtarballをインストール（未公開）
-npm install /path/to/kurotch-homelab-forma-react-0.1.1.tgz
+npm install @kurotch-homelab/forma-react@0.1.2
+# CSSのみ
+npm install @kurotch-homelab/forma-styles@0.2.2
+# トークンのみ
+npm install @kurotch-homelab/forma-tokens@0.1.2
 ```
+
+`forma-styles`のCSSはトークンを含む単独スタイルです。React版も共有CSSを含み、Reactのみをpeer dependencyとします。導入先のlockfileでバージョン・取得URL・integrityを保持してください。
 
 ```tsx
 import { FormaProvider, Button } from '@kurotch-homelab/forma-react';
@@ -170,3 +166,5 @@ Forma is a design guideline, not a UI framework. Read `GUIDELINES.md`, share CSS
 With Node.js 22+, run `npm ci` and `npm run dev`, then open http://127.0.0.1:5173. The optional React package is `@kurotch-homelab/forma-react`; its bilingual preview is at `/react/index.html`. Import its components and `@kurotch-homelab/forma-react/styles.css`, then wrap your application in `FormaProvider`. React is its only runtime peer dependency. Native date and datalist interfaces vary by browser and OS.
 
 For the framework-independent guides alone, `npm run dev:guides` / `npm run build:guides` still require no installation. TypeScript builds the React package; esbuild bundles only the preview app. Browser checks use Playwright and axe; install Chromium with `npx playwright install chromium`. Use `npm run build` after edits and reload the browser.
+
+Published packages are installed from GitHub Packages with authentication. See [registry setup](./docs/github-packages.md). The skill contains no package archives or compiled library CSS/tokens; its installer prepares pinned dependencies, then syncs assets from installed packages.

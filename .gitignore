@@ -4,7 +4,6 @@ test-results/
 playwright-report/
 output/
 *.tgz
-!skills/forma-design-system/assets/packages/*.tgz
 .serena/
 .playwright-mcp/
 .playwright-cli/

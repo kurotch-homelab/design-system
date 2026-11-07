@@ -16,14 +16,16 @@
     "build": "npm run build:guides && npm run build:react",
     "build:guides": "npm run build -w @kurotch-homelab/forma-tokens && npm run build -w @kurotch-homelab/forma-styles && npm run build -w @kurotch-homelab/forma-catalog",
     "build:react": "npm run build -w @kurotch-homelab/forma-react && npm run build -w @kurotch-homelab/forma-react-preview",
-    "build:skill": "npm run build && node scripts/build-skill.mjs",
+    "build:skill": "node scripts/build-skill.mjs",
     "pack:skill": "npm run build:skill && npm pack ./skills/forma-design-system --ignore-scripts --pack-destination output",
     "test:skill": "node --test tests/skills/*.test.mjs",
     "test:skill:consumer": "node tests/skills/consumer.mjs",
     "typecheck": "tsc -p packages/react/tsconfig.json --noEmit && tsc -p apps/react-preview/tsconfig.json --noEmit",
     "test": "node --test tests/unit/*.test.mjs",
     "test:e2e": "playwright test",
-    "check": "node scripts/check.mjs && npm run typecheck"
+    "check": "node scripts/check.mjs && npm run typecheck",
+    "test:skill:consumer:github": "node tests/skills/consumer.mjs --github-packages",
+    "publish:packages": "node scripts/publish-packages.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",

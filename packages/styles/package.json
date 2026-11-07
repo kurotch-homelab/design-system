@@ -1,6 +1,6 @@
 {
   "name": "@kurotch-homelab/forma-styles",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
   "files": [
     "dist",
@@ -8,10 +8,19 @@
   ],
   "exports": {
     ".": "./dist/forma.css",
-    "./css": "./dist/forma.css"
+    "./css": "./dist/forma.css",
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "node build.mjs"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kurotch-homelab/design-system.git",
+    "directory": "packages/styles"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
 }

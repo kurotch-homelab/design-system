@@ -1,44 +1,86 @@
 # Forma integration
 
-## Choose the smallest useful integration
+## Packages and modes
 
-| Project                                                         | Mode     | Integration                                                  |
-| --------------------------------------------------------------- | -------- | ------------------------------------------------------------ |
-| Existing React or Next.js web app                               | `react`  | Local React tarball + shared CSS, FormaProvider, local fonts |
-| Vue, Nuxt, Svelte, Astro, server-rendered templates, plain HTML | `css`    | Standalone CSS, native elements, application-owned behavior  |
-| Native app, design tooling, existing component library          | `tokens` | CSS/JSON design tokens; implement each platform's behavior   |
+| Project | Mode | GitHub Packages dependency |
+| --- | --- | --- |
+| React / Next.js | `react` | `@kurotch-homelab/forma-react` |
+| Vue / Svelte / Astro / HTML | `css` | `@kurotch-homelab/forma-styles` |
+| Native/design tooling | `tokens` | `@kurotch-homelab/forma-tokens` |
 
-The source repository and the Forma npm registry are not needed. Everything specific to Forma is bundled in the skill. React itself and the host application's dependencies are provided by the project, its cache or registry.
+Use the exact version in `bundle.json`. There are no packaged implementations in this skill.
+Fonts, examples and design references remain local; a source checkout is unnecessary.
 
-## Installer commands
+## Registry and authentication
 
-Use Node.js 22 or later. The installer has no npm dependencies, downloads, shell subprocesses or postinstall scripts.
+GitHub's npm registry requires authentication even for public packages.
+Use a personal access token (classic) with `read:packages` for installation.
+Do not print tokens, copy them into the skill, or commit them in application files.
+
+For npm, pnpm, and Bun, configure the following in the application's workspace-root `.npmrc`.
+Read any existing file first. Preserve unrelated entries; do not replace another registry mapping for
+this scope without checking the other `@kurotch-homelab` dependencies used by the app.
+
+```ini
+@kurotch-homelab:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
+```
+
+Provide `NODE_AUTH_TOKEN` through the user's environment or CI secrets. The literal environment-variable
+reference above is safe to store; the actual token must stay outside source control. Existing npm login
+credentials may be used instead. Do not add an unresolved token placeholder over working credentials.
+Yarn Classic also reads `.npmrc`. For Yarn Berry use the existing `.yarnrc.yml` with:
+
+```yaml
+npmScopes:
+  kurotch-homelab:
+    npmRegistryServer: "https://npm.pkg.github.com"
+    npmAlwaysAuth: true
+    npmAuthToken: "${NODE_AUTH_TOKEN}"
+```
+
+Merge this into the existing configuration. For Yarn PnP, run the sync/verify script through `yarn node`
+so its package resolution hook is active. For pnpm, keep the workspace's lockfile and node linker settings.
+GitHub Actions can use `GITHUB_TOKEN` with `packages: read` when its repository has package access;
+otherwise use an appropriately scoped secret provided by the user.
+
+Official reference: [GitHub npm registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry).
+
+## Prepare, install, sync
+
+The Node.js 22+ installer uses built-ins only. It never runs package managers or changes credentials.
 
 ```sh
 node "<SKILL_DIR>/scripts/forma.mjs" inspect --target "<APP_DIR>"
 node "<SKILL_DIR>/scripts/forma.mjs" install --target "<APP_DIR>" --mode react --assets-dir public/forma --dry-run
 node "<SKILL_DIR>/scripts/forma.mjs" install --target "<APP_DIR>" --mode react --assets-dir public/forma
+# In the workspace root: npm install / pnpm install / yarn install / bun install
+node "<SKILL_DIR>/scripts/forma.mjs" sync --target "<APP_DIR>"
 node "<SKILL_DIR>/scripts/forma.mjs" verify --target "<APP_DIR>"
 ```
 
-Flags:
+- `--target`: actual application package, including within a monorepo.
+- `--mode auto|react|css|tokens`: auto chooses React only when declared by the app.
+- `--assets-dir`: relative asset directory, e.g. `public/forma`, `static/forma`, `assets/forma`.
+- `--fonts bundled|system`: original licensed local fonts by default; tokens copies no fonts.
+- `--manager npm|pnpm|yarn|bun`: override ambiguous package-manager detection, never invokes it.
+- `--dry-run`: read-only preparation or sync plan.
 
-- `--target`: existing application directory; defaults to the current directory.
-- `--mode auto|react|css|tokens`: auto chooses React only if React is declared in the target manifest; otherwise CSS.
-- `--assets-dir`: relative asset destination inside the target. Default `public/forma`; set it explicitly to match the app.
-- `--fonts bundled|system`: bundled is the default for web integrations. System mode writes a font-family override and copies no font files. Tokens mode does not copy fonts.
-- `--manager npm|pnpm|yarn|bun`: override only the reported package manager when autodetection is ambiguous. No package manager is run by this script.
-- `--dry-run`: validates and reports changes without creating or modifying files.
+`install` writes a pinned registry dependency, fonts/docs/licenses and `vendor/forma/installation.json`.
+CSS/tokens projects without package.json receive a private manifest containing only the selected Forma dependency.
+It preserves unrelated package fields, lockfiles and source code. Run the existing package manager at its
+workspace root and inspect the lockfile's version, GitHub registry URL and integrity.
 
-`install` writes `vendor/forma/installation.json`, versioned tarballs when needed, local reference docs and the chosen assets. In React mode it adds `@kurotch-homelab/forma-react` to dependencies as a portable `file:vendor/forma/...tgz` entry. It keeps unrelated package fields and never rewrites source files, lockfiles, scripts or providers. Re-running with the same inputs is idempotent. Edited managed files or a conflicting existing Forma dependency cause an error before any planned write. There is no force-delete/overwrite switch. Resolve changes deliberately or select a new unused asset directory.
+`sync` requires the expected installed package version. It copies `forma.css` for CSS mode, or `tokens.css`
+and `tokens.json` for tokens mode, plus the package license. React loads its CSS/JS from the installed package.
+`verify` checks managed file hashes, dependency specs and installed package versions; it does not certify the UI.
 
-`verify` checks installed checksums and the local dependency reference. It does **not** prove the stylesheet/provider is used or the app is accessible. Finish by building and checking the real screen.
+Repeated commands are idempotent. Modified managed files and conflicting dependencies stop before writes.
+The older managed file: dependency can migrate through `install`; old tarballs are left untouched but are no
+longer referenced. Review/remove unused files as a separate application change.
 
-For monorepos, target the actual app package (for example `apps/web`). Dependencies are relative to that package. Run the package manager at its workspace root, as identified by `inspect`, and use the workspace's established commands. Do not create another lockfile in a child package. If multiple package-manager signals conflict, inspect the workspace and pass `--manager` rather than guessing.
-
-Commit `vendor/forma`, the copied asset directory, package.json and the updated lockfile. Do not commit node_modules. No installed path should contain the skill directory, the source repository or a developer's home directory.
-
-Keep the generated `LICENSE` files in the asset directory and `vendor/forma/`, and the third-party notices in `vendor/forma/THIRD_PARTY_NOTICES.md`. Forma's code, examples, docs, CSS and tokens use MIT; bundled fonts retain their separate `OFL.txt` and `SOURCE.txt`. Preserve these notices when copying or redistributing the corresponding assets.
+Commit the package manifest, lockfile, local assets and `vendor/forma` docs/record. Keep MIT licenses and the
+fonts' `OFL.txt`/`SOURCE.txt` with redistributed files. Do not commit node_modules or authentication values.
 
 ## React / Vite
 
@@ -113,22 +155,22 @@ Theme switching and persistence belong to the application. `assets/examples/html
 
 Tokens mode copies `tokens.css` and `tokens.json` only (plus local reference documentation). JSON includes primitive, semantic light/dark, component, typography, spacing, radius, and motion values. References such as `{primitive.gray900}` and `{semantic.brand}` need resolving if converted to platform-native constants; do not treat them as literal colors.
 
-Override semantic variables after Forma's CSS and within the same intended boundary. Preserve pairs such as brand/on-brand, surface/text and danger/danger-subtle. Check both themes and contrast after changes. Do not edit bundled assets in place; put application overrides in the project's own stylesheet so future bundle updates can be checked.
+Override semantic variables after Forma's CSS and within the same intended boundary. Preserve pairs such as brand/on-brand, surface/text and danger/danger-subtle. Check both themes and contrast after changes. Do not edit managed assets in place; put application overrides in the project's own stylesheet so future package updates can be checked.
 
-## Fonts and offline use
+## Fonts and network access
 
 The default copies original IBM Plex Sans JP Regular/Medium/SemiBold TTF files, local @font-face declarations, source provenance and SIL OFL 1.1. Keep OFL.txt with redistributed fonts. The source is pinned in fonts/SOURCE.txt; it is not fetched during installation. TTF files total approximately 7 MB and load on demand with font-display: swap. A build pipeline may create WOFF2/subsets while preserving licensing; the unmodified bundle requires no font tooling. System mode is available when font payload is unsuitable, but this deliberately changes the reference typography.
 
-Forma-specific installation works offline. A fresh React application still needs React, its renderer and its build tooling from the project's usual sources; the skill does not bundle third-party runtimes.
+Initial Forma package installation requires access to GitHub Packages and authentication. A populated package-manager cache may support later offline installs. The rendered application and local fonts do not require GitHub or Google requests at runtime.
 
 ## Verification and completion
 
-- `self-check` verifies the skill bundle; `verify` verifies the installed snapshot and local package reference.
+- `self-check` verifies local guidance/assets and pinned registry metadata; `verify` checks managed files and installed package versions.
 - Run the target's typecheck/build and relevant tests. Inspect one real screen, not just an import statement.
 - Check labels, inline error association, disabled/loading states, keyboard menus/tabs, dialog focus restoration and reduced motion.
 - Inspect 390 / 768 / 1440px and light/dark; if the product has multiple languages, check them too. Keep table overflow inside the table.
 - Test a production build or equivalent served output so font and CSS URLs work outside the development root.
 
-The checked-in assets are a versioned snapshot, not a live connection to the authoring project. Updating the skill or app is a deliberate local-bundle update, not an instruction to fetch an unverified package from npm.
+The skill pins package versions. Update through a reviewed manifest and lockfile change; sync copied CSS/tokens after installing a new version. Checksum verification does not replace package-manager integrity checks.
 
-Official implementation references: [npm local paths](https://docs.npmjs.com/cli/v11/configuring-npm/package-json/#local-paths), [Vite assets and base paths](https://vite.dev/guide/assets), [Next.js global CSS](https://nextjs.org/docs/app/getting-started/css).
+Official implementation references: [Vite assets and base paths](https://vite.dev/guide/assets), [Next.js global CSS](https://nextjs.org/docs/app/getting-started/css).
